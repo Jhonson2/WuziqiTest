@@ -1,6 +1,8 @@
 package com.example.dellc.wuziqitest;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -17,6 +19,12 @@ public class WuziqiPanel extends View {
 
     private Paint mPaint=new Paint();
 
+    private Bitmap mWhitePiece;
+    private Bitmap mBlackPiece;
+
+    //自定义：棋子的比例3：4
+    private float ratioPieceOfLineHeight=3 * 1.0f / 4;
+
     public WuziqiPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -25,10 +33,15 @@ public class WuziqiPanel extends View {
     }
 
     private void init() {
+        //棋盘线画笔设置
         mPaint.setColor(0x88000000);
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
         mPaint.setStyle(Paint.Style.STROKE);
+
+        //黑白棋子
+        mWhitePiece=BitmapFactory.decodeResource(getResources(),R.drawable.stone_w2);
+        mBlackPiece=BitmapFactory.decodeResource(getResources(),R.drawable.stone_b1);
     }
 
     @Override
@@ -57,6 +70,11 @@ public class WuziqiPanel extends View {
         mPanelWidth=w;
         mLineHeight=mPanelWidth * 1.0f / MAX_LINE;
 
+        //修改棋子在棋盘LineHeight的尺寸
+        int pieceWidth= (int) (mLineHeight*ratioPieceOfLineHeight);
+
+        mWhitePiece=Bitmap.createScaledBitmap(mWhitePiece,pieceWidth,pieceWidth,false);
+        mBlackPiece=Bitmap.createScaledBitmap(mBlackPiece,pieceWidth,pieceWidth,false)
 
     }
 
