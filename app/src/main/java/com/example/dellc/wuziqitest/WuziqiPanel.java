@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,8 +40,8 @@ public class WuziqiPanel extends View {
     //白棋先手 当前轮到白棋
     private boolean mIsWhite=true;
     //定义黑白棋的坐标数组列表
-    private List<Point> mWhiteArray=new ArrayList<>();
-    private List<Point> mBlackArray=new ArrayList<>();
+    private ArrayList<Point> mWhiteArray=new ArrayList<>();
+    private ArrayList<Point> mBlackArray=new ArrayList<>();
 
     private boolean mIsGameOver;//是否游戏结束
     private boolean mIsWhiteWinner;//白棋是否是赢家
@@ -336,5 +339,38 @@ public class WuziqiPanel extends View {
             canvas.drawLine(y,startX,y,endX,mPaint);
         }
 
+    }
+
+
+    //view的数据存储和恢复
+    private static final String INSTANCE="instance";
+    private static final String INSTANCE_GAME_OVER="instance_game_over";
+    private static final String INSTANCE_WHITE_ARRAY="instance_white_array";
+    private static final String INSTANCE_BLACK_ARRAY="instance_black_array";
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle=new Bundle();
+        bundle.putParcelable(INSTANCE,super.onSaveInstanceState());
+        bundle.putBoolean(INSTANCE_GAME_OVER,mIsGameOver);
+        bundle.putParcelableArrayList(INSTANCE_WHITE_ARRAY,mWhiteArray);
+        bundle.putParcelableArrayList(INSTANCE_BLACK_ARRAY,mBlackArray);
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if(state instanceof Bundle){
+            //自己定义的Bundle
+            Bundle bundle= (Bundle) state;
+            mIsGameOver=bundle.getBoolean(INSTANCE_GAME_OVER);
+            mWhiteArray=bundle.getParcelableArrayList(INSTANCE_WHITE_ARRAY);
+            mBlackArray=bundle.getParcelableArrayList(INSTANCE_BLACK_ARRAY);
+
+            super.onRestoreInstanceState(bundle.getParcelable(INSTANCE));
+            return;
+        }
+        //否则执行系统默认方法
+        super.onRestoreInstanceState(state);
     }
 }
