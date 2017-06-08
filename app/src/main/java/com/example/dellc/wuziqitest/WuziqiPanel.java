@@ -49,7 +49,7 @@ public class WuziqiPanel extends View {
     public WuziqiPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setBackgroundColor(0x44ff0000);
+       // setBackgroundColor(0x44ff0000);
         init();
     }
 
@@ -341,6 +341,14 @@ public class WuziqiPanel extends View {
 
     }
 
+    //再来一局
+ public void reStart(){
+     mWhiteArray.clear();
+     mBlackArray.clear();
+     mIsGameOver=false;
+     mIsWhiteWinner=false;
+     invalidate();
+ }
 
     //view的数据存储和恢复
     private static final String INSTANCE="instance";
