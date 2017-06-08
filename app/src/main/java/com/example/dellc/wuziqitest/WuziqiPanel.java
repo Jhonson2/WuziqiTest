@@ -5,15 +5,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dellc on 2017/6/8.
  */
 
 public class WuziqiPanel extends View {
-    private int mPanelWidth;
+    private int mPanelWidth;//定义棋盘
     private float mLineHeight;
     private int MAX_LINE=10;
 
@@ -24,6 +29,12 @@ public class WuziqiPanel extends View {
 
     //自定义：棋子的比例3：4
     private float ratioPieceOfLineHeight=3 * 1.0f / 4;
+
+    //白棋先手 当前轮到白棋
+    private boolean mIsWhite=true;
+    //定义黑白棋的坐标数组列表
+    private List<Point> mWhiteArray=new ArrayList<>();
+    private List<Point> mBlackArray=new ArrayList<>();
 
     public WuziqiPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -74,8 +85,41 @@ public class WuziqiPanel extends View {
         int pieceWidth= (int) (mLineHeight*ratioPieceOfLineHeight);
 
         mWhitePiece=Bitmap.createScaledBitmap(mWhitePiece,pieceWidth,pieceWidth,false);
-        mBlackPiece=Bitmap.createScaledBitmap(mBlackPiece,pieceWidth,pieceWidth,false)
+        mBlackPiece=Bitmap.createScaledBitmap(mBlackPiece,pieceWidth,pieceWidth,false);
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action=event.getAction();
+        if(action==MotionEvent.ACTION_UP){
+            int x= (int) event.getX();
+            int y= (int) event.getY();
+
+            //新建棋子坐标
+           /* Point p=new Point(x,y);  具体坐标行不通*/
+
+            Point p=getValidPoint(x,y);//要设置（0，0）（0，1）...这样的坐标
+
+            //当前棋盘的位置是否已经存在棋子
+            if(mWhiteArray.contains(p) || mBlackArray.contains(p)){
+                return false;
+            }
+
+            if(mIsWhite){
+               mWhiteArray.add(p); //白棋坐标放在白棋数组列表
+            }else{
+                mBlackArray.add(p);// 否则放在黑棋数组列表
+            }
+            invalidate();//请求重回
+            mIsWhite=!mIsWhite;//黑白棋互变
+
+        }
+            return true;
+    }
+    //要设置（0，0）（0，1）...这样的坐标
+    private Point getValidPoint(int x, int y) {
+        return new Point((int)(x / mLineHeight),(int)(y/mLineHeight));
     }
 
     @Override
